@@ -2,8 +2,6 @@ import { useState, useEffect } from "react";
 import FilterBar from "../components/FilterBar";
 import NotificationList from "../components/NotificationList";
 import { logEvent } from "../services/logger";
-import { fetchNotifications }
-  from "../api/notificationApi";
 import {
   sortNotificationsByPriority,
 } from "../services/priorityCalculator";
@@ -11,27 +9,7 @@ import {
 function Dashboard() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedType, setSelectedType] = useState("");
-const [notifications, setNotifications] =
-  useState([]);
-  useEffect(() => {
-  const loadNotifications =
-    async () => {
-      try {
-        const data =
-          await fetchNotifications();
 
-        console.log(data);
-
-        setNotifications(
-          data.notifications || []
-        );
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-  loadNotifications();
-}, []);
   useEffect(() => {
     logEvent(
       "info",
@@ -81,28 +59,30 @@ const [notifications, setNotifications] =
       return matchesSearch && matchesType;
     }
   );
-const sortedNotifications =
-  sortNotificationsByPriority(
-    filteredNotifications
-  );
+
+  const sortedNotifications =
+    sortNotificationsByPriority(
+      filteredNotifications
+    );
+
   const topNotifications =
-  sortedNotifications.slice(0, 15);
+    sortedNotifications.slice(0, 15);
 
   const highPriority =
-  topNotifications.filter(
-    (item) => item.priority >= 90
-  ).length;
+    topNotifications.filter(
+      (item) => item.priority >= 90
+    ).length;
 
   const avgPriority =
-  topNotifications.length === 0
-    ? 0
-    : Math.round(
-        topNotifications.reduce(
-          (sum, item) =>
-            sum + item.priority,
-          0
-        ) / topNotifications.length
-      );
+    topNotifications.length === 0
+      ? 0
+      : Math.round(
+          topNotifications.reduce(
+            (sum, item) =>
+              sum + item.priority,
+            0
+          ) / topNotifications.length
+        );
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">
@@ -112,9 +92,11 @@ const sortedNotifications =
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <div className="bg-white p-4 rounded-xl shadow">
-          <h3 className="text-gray-500">Total</h3>
+          <h3 className="text-gray-500">
+            Total
+          </h3>
           <p className="text-2xl font-bold">
-            {notifications.length}
+            {topNotifications.length}
           </p>
         </div>
 
@@ -145,8 +127,8 @@ const sortedNotifications =
       />
 
       <NotificationList
-  notifications={topNotifications}
-/>
+        notifications={topNotifications}
+      />
     </div>
   );
 }
